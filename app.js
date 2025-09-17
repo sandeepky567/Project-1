@@ -76,7 +76,7 @@ app.get('/listings/:id/edit',async (req,res)=>{
         await Listing.findByIdAndDelete(id);
         res.redirect('/listings');
     });
-    
+      
 // app.get('/testListing',async (req,res)=>{
 //     let samplelisting=new Listing({
 //     title:"Big Boss Ranch",
