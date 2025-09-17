@@ -12,8 +12,8 @@ async function   main(){
     await mongoose.connect(mongourl);
 }
 main().then(()=>{
-    console.log("connected to db");
-}).catch((err)=>{
+    console.log("connected to db");   
+}).catch((err)=>{ 
     console.log(err);
 });
 
