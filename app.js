@@ -92,7 +92,7 @@ app.get('/listings/:id/edit',async (req,res)=>{
 // });
 
 
-//fvwbnioksdewfvwebjnkmd
+//fvwbnioks
 
 app.listen(8080,()=>{
     console.log("server started at port 8080");
