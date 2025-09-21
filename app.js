@@ -5,6 +5,7 @@ const Listing=require('./models/listing');
 const path=require('path');
 const methodOverride = require('method-override');
 const ejsMate=require('ejs-mate');
+const { title } = require('process');
 
 
 async function   main(){
@@ -40,6 +41,8 @@ app.get('/listings',async (req,res)=>{
 app.get('/listings/new',(req,res)=>{
     res.render("listings/new.ejs");
 });
+
+
 
 //show route
 app.get('/listings/:id',async (req,res)=>{

@@ -19,10 +19,22 @@ async function   main(){
     await mongoose.connect(mongourl);
 }
 
-const initdb=async()=>{
+// const initdb=async()=>{
+//     await Listing.deleteMany({});
+//     await Listing.insertMany(initData.data);
+//     console.log("DB initialized with sample data");
+//   //  mongoose.connection.close();
+// }
+// initdb();  
+const initdb = async () => {
     await Listing.deleteMany({});
-    await Listing.insertMany(initData.data);
+    // Convert image object to string for each listing
+    const normalizedData = initData.data.map(listing => ({
+        ...listing,
+        image: typeof listing.image === 'object' ? listing.image.url : listing.image
+    }));
+    await Listing.insertMany(normalizedData);
     console.log("DB initialized with sample data");
-  //  mongoose.connection.close();
-}
+    // mongoose.connection.close();
+};
 initdb();

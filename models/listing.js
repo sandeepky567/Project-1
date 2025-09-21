@@ -8,16 +8,16 @@ const listingSchema = new Schema({
         required: true
     },
     description: String,
- // filepath: d:\web\bookmyland\models\listing.js
-image: {
-    filename: String,
-    url: String
-},// filepath: d:\web\bookmyland\models\listing.js
-image: {
-    filename: String,
-    url: String
-},
-     price: Number,
+    image: {
+         default: 'https://unsplash.com/photos/big-boss-with-white-cowboy-hat-smoking-cigar-sitting-behind-desk-american-flag-in-the-background-dngIO0oF27k',
+        type: String,
+        default: 'https://unsplash.com/photos/big-boss-with-white-cowboy-hat-smoking-cigar-sitting-behind-desk-american-flag-in-the-background-dngIO0oF27k',
+        set:(v)=> v===''?'https://unsplash.com/photos/big-boss-with-white-cowboy-hat-smoking-cigar-sitting-behind-desk-american-flag-in-the-background-dngIO0oF27k'
+        :v
+       
+    },
+
+    price: Number,
     location: String,
     country: String,
 });
