@@ -31,6 +31,20 @@ app.use(express.static(path.join(__dirname,'public')));
 app.get('/',(req,res)=>{
     res.send("Wapas jaa lavde....");
 });
+//test
+// app.get('/test',async (req,res)=>{
+//     let samplelisting=new Listing({
+//     title:"Big Boss Ranch",
+//     description:"A beautiful ranch in Texas",
+//     price:1000000,
+//     location:"Pune",
+//     country:"INDIA"
+//     });
+
+//     await samplelisting.save();
+//     console.log("sample was saved");
+//     res.send("successful testing");
+// });
 
 app.get('/listings',async (req,res)=>{
     const alllistings = await Listing.find({});
@@ -70,8 +84,18 @@ app.get('/listings/:id/edit',async (req,res)=>{
  app.put('/listings/:id',async (req,res)=>{
     const {id}=req.params;
     const listing=await Listing.findByIdAndUpdate(id,req.body.listing,{runValidators:true,new:true});
-    res.redirect(`/listings/${listing._id}`);
+    
+    res.redirect(`/listings`);
  });
+// app.put('/listings/:id', async (req, res) => {
+//     const { id } = req.params;
+//     // If image is blank, set to default
+//     if (req.body.listing.image === '') {
+//         req.body.listing.image = 'https://unsplash.com/photos/big-boss-with-white-cowboy-hat-smoking-cigar-sitting-behind-desk-american-flag-in-the-background-dngIO0oF27k';
+//     }
+//     const listing = await Listing.findByIdAndUpdate(id, req.body.listing, { runValidators: true });
+//     res.redirect(`/listings`);
+// });
 
 //delete route
     app.delete('/listings/:id',async (req,res)=>{

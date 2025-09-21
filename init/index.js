@@ -26,6 +26,7 @@ async function   main(){
 //   //  mongoose.connection.close();
 // }
 // initdb();  
+
 const initdb = async () => {
     await Listing.deleteMany({});
     // Convert image object to string for each listing

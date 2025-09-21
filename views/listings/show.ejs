@@ -6,9 +6,10 @@
      </div>
 
      <div class="card col-6 offset-2 show-card">
-       <img src="<%= listing.image?.url || listing.image || 'https://via.placeholder.com/400x300?text=No+Image' %>" 
-     class="card-img-top" 
-     alt="listing_image">
+       <img src="<%= listing.image ? listing.image : '/images/default.jpg' %>" 
+     class="card-img-top show-img" 
+     alt="listing_image"
+     style="height: 30rem;">
               <b><%= listing.title %></b><br>
               <%= listing.description %>
             </p><br>
