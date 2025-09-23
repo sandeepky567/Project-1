@@ -6,6 +6,9 @@ const path=require('path');
 const methodOverride = require('method-override');
 const ejsMate=require('ejs-mate');
 const { title } = require('process');
+const wrapAsync=require('./utlis/wrapasync.js');
+const ExpressError=require('./utlis/expresserror.js');
+const { listingSchema } = require('./schema.js');
 
 
 async function   main(){
@@ -31,6 +34,16 @@ app.use(express.static(path.join(__dirname,'public')));
 app.get('/',(req,res)=>{
     res.send("Wapas jaa lavde....");
 });
+
+const validateListing=(req,res,next)=>{
+   let {error}=listingSchema.validate(req.body);
+   if(error){
+       throw new ExpressError(400,error);
+   }else{
+       next();
+   }
+};
+
 //test
 // app.get('/test',async (req,res)=>{
 //     let samplelisting=new Listing({
@@ -46,10 +59,10 @@ app.get('/',(req,res)=>{
 //     res.send("successful testing");
 // });
 
-app.get('/listings',async (req,res)=>{
+app.get('/listings',wrapAsync(async (req,res)=>{
     const alllistings = await Listing.find({});
     res.render("listings/index.ejs",{alllistings})
-});
+}));
 
 //New and create route
 app.get('/listings/new',(req,res)=>{
@@ -59,34 +72,54 @@ app.get('/listings/new',(req,res)=>{
 
 
 //show route
-app.get('/listings/:id',async (req,res)=>{
+app.get('/listings/:id',wrapAsync(async (req,res)=>{
     const {id}=req.params;
     const listing=await Listing.findById(id);
     res.render("listings/show.ejs",{listing});
-});
+}));
 
 //create route
-app.post('/listings',async (req,res)=>{
+app.post('/listings',validateListing,
+    wrapAsync(async (req,res,next)=>{
+
+    // if(!req.body.listing){
+    //     throw new ExpressError(400,"Invalid Listing Data");
+    // }
   const newlisting=new Listing(req.body.listing);
+//   if(!newlisting.title){
+//     throw new ExpressError(400,"Title cannot be blank");
+//   }
+//   if(!newlisting.description){
+//       throw new ExpressError(400,"Description cannot be blank");
+//   }
+//   if(!newlisting.price || newlisting.price<0){
+//     throw new ExpressError(400,"Price cannot be blank or negative");
+//   }
+//   if(!newlisting.location){
+//     throw new ExpressError(400,"Location cannot be blank");
+//   }
   await newlisting.save();
   res.redirect(`/listings/${newlisting._id}`);
- 
-});
+
+}));
 
 //edit route
-app.get('/listings/:id/edit',async (req,res)=>{
+app.get('/listings/:id/edit',wrapAsync(async (req,res)=>{
     const {id}=req.params;
     const listing=await Listing.findById(id);
     res.render("listings/edit.ejs",{listing});
-} );
+}));
 
 //update route
- app.put('/listings/:id',async (req,res)=>{
+ app.put('/listings/:id',wrapAsync(async (req,res)=>{
+    if(!req.body.listing){
+        throw new ExpressError(400,"Invalid Listing Data");
+    }
     const {id}=req.params;
     const listing=await Listing.findByIdAndUpdate(id,req.body.listing,{runValidators:true,new:true});
     
     res.redirect(`/listings`);
- });
+ }));
 // app.put('/listings/:id', async (req, res) => {
 //     const { id } = req.params;
 //     // If image is blank, set to default
@@ -98,12 +131,12 @@ app.get('/listings/:id/edit',async (req,res)=>{
 // });
 
 //delete route
-    app.delete('/listings/:id',async (req,res)=>{
+    app.delete('/listings/:id',wrapAsync(async (req,res)=>{
         const {id}=req.params;
         await Listing.findByIdAndDelete(id);
         res.redirect('/listings');
-    });
-      
+    }));
+
 // app.get('/testListing',async (req,res)=>{
 //     let samplelisting=new Listing({
 //     title:"Big Boss Ranch",
@@ -118,8 +151,17 @@ app.get('/listings/:id/edit',async (req,res)=>{
 //     res.send("successful testing");
 // });
 
+app.all('*',(req,res,next)=>{
+    next(new ExpressError(404,"Page Not Found"));
+});
 
-//fvwbnioks
+//error handling middleware
+
+app.use((err,req,res,next)=>{
+    let {statusCode=500,message="Something went wrong"}=err;
+   // res.status(statusCode).send(message);
+   res.status(statusCode).render("error.ejs",{message});
+});
 
 app.listen(8080,()=>{
     console.log("server started at port 8080");
