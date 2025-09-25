@@ -9,7 +9,7 @@ const { title } = require('process');
 const wrapAsync=require('./utlis/wrapasync.js');
 const ExpressError=require('./utlis/expresserror.js');
 const { listingSchema } = require('./schema.js');
-
+const Review = require('./models/review.js');
 
 async function   main(){
      const mongourl="mongodb://127.0.0.1:27017/bookmyland";
@@ -134,7 +134,23 @@ app.get('/listings/:id/edit',wrapAsync(async (req,res)=>{
         await Listing.findByIdAndDelete(id);
         res.redirect('/listings');
     }));
+  
+//reviews route  post route
+app.post('/listings/:id/reviews', wrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let review = new Review(req.body.review);
 
+    // ✅ FIX: Check if listing.reviews is undefined and initialize it
+    if (!listing.reviews) {
+        listing.reviews = [];
+    }
+
+    listing.reviews.push(review); // Now 'reviews' is guaranteed to be an array
+
+    await review.save();
+    await listing.save();
+      res.redirect(`/listings/${listing._id}`);
+}));
 // app.get('/testListing',async (req,res)=>{
 //     let samplelisting=new Listing({
 //     title:"Big Boss Ranch",
