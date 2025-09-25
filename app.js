@@ -82,9 +82,7 @@ app.get('/listings/:id',wrapAsync(async (req,res)=>{
 app.post('/listings',validateListing,
     wrapAsync(async (req,res,next)=>{
 
-    // if(!req.body.listing){
-    //     throw new ExpressError(400,"Invalid Listing Data");
-    // }
+    
   const newlisting=new Listing(req.body.listing);
 //   if(!newlisting.title){
 //     throw new ExpressError(400,"Title cannot be blank");
@@ -166,3 +164,4 @@ app.use((err,req,res,next)=>{
 app.listen(8080,()=>{
     console.log("server started at port 8080");
 });
+
