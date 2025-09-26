@@ -9,6 +9,7 @@ const { title } = require('process');
 const wrapAsync=require('./utlis/wrapasync.js');
 const ExpressError=require('./utlis/expresserror.js');
 const { listingSchema } = require('./schema.js');
+const { reviewSchema } = require('./schema.js');
 const Review = require('./models/review.js');
 
 async function   main(){
@@ -42,6 +43,16 @@ const validateListing=(req,res,next)=>{
    }else{
        next();
    }
+};
+
+const validateReview=(req,res,next)=>{
+   let {error}=reviewSchema.validate(req.body);
+   if(error){
+       throw new ExpressError(400,error);
+   }else{
+       next();
+   }
+   
 };
 
 //test
@@ -136,7 +147,7 @@ app.get('/listings/:id/edit',wrapAsync(async (req,res)=>{
     }));
   
 //reviews route  post route
-app.post('/listings/:id/reviews', wrapAsync(async (req, res) => {
+app.post('/listings/:id/reviews',validateReview, wrapAsync(async (req, res) => {
     let listing = await Listing.findById(req.params.id);
     let review = new Review(req.body.review);
 
