@@ -42,8 +42,21 @@
     <button type="submit" class="btn btn-outline-dark">Submit Review</button>
   </form>
       <hr>
-      <h4>Reviews</h4>
-      <p> <%=listing.reviews%> </p>
+   <p><b> All Reviews</b></p>
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
+  <% for(let review of listing.reviews) { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Rating: <%= review.rating %>  Stars</h5>
+        <p class="card-text"><%= review.comment %></p>
+      </div>
+      <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+        <button class="btn btn-outline-dark">Delete Review</button>
+      </form>
+    </div>
+  <% } %>
+    </div>
+     
 </div>
  </div>
 <script src="/js/scripts.js"> </script>
