@@ -11,8 +11,8 @@ const ExpressError=require('./utlis/expresserror.js');
 const { listingSchema } = require('./schema.js');
 const { reviewSchema } = require('./schema.js');
 const Review = require('./models/review.js');
-
-
+const session=require('express-session');
+const flash=require('connect-flash');
 
 // const listings=require('./routes/listings.js');
 // app.use('/listings',listings);
@@ -31,6 +31,8 @@ main().then(()=>{
     console.log(err);
 });
 
+
+
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
 app.use(express.urlencoded({extended:true}));
@@ -38,6 +40,28 @@ app.use(methodOverride('_method'));
 app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,'public')));
 
+
+
+const sessionOptions={
+    secret:"mysuppersecret",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expire:Date.now()+1000*60*60*24*7,
+        maxAge:1000*60*60*24*7,
+        httpOnly:true
+    },
+};
+app.use(session(sessionOptions));
+app.use(flash()); 
+
+
+app.use((req,res,next)=>{
+    res.locals.success=req.flash('success');
+    res.locals.error=req.flash('error');
+    next();
+}
+);
 
 
 
@@ -83,6 +107,10 @@ app.get('/listings/new',(req,res)=>{
 app.get('/listings/:id',wrapAsync(async (req,res)=>{
     const {id}=req.params;
     const listing=await Listing.findById(id).populate('reviews');
+    if(!listing){
+        req.flash('error','Cannot find that listing!');
+        return res.redirect('/listings');
+    }
     res.render("listings/show.ejs",{listing});
 }));
 
@@ -94,7 +122,8 @@ app.post('/listings',validateListing,
     
   const newlisting=new Listing(req.body.listing);
   await newlisting.save();
-  res.redirect(`/listings/${newlisting._id}`);
+  req.flash('success','Successfully made a new listing');
+  res.redirect(`/listings`);
 
 }));
 
@@ -102,6 +131,7 @@ app.post('/listings',validateListing,
 app.get('/listings/:id/edit',wrapAsync(async (req,res)=>{
     const {id}=req.params;
     const listing=await Listing.findById(id);
+     req.flash('success','Successfully edited a listing');
     res.render("listings/edit.ejs",{listing});
 }));
 
@@ -112,7 +142,7 @@ app.put('/listings/:id',wrapAsync(async (req,res)=>{
     }
     const {id}=req.params;
     const listing=await Listing.findByIdAndUpdate(id,req.body.listing,{runValidators:true,new:true});
-    
+     req.flash('success','Successfully updated a listing');
     res.redirect(`/listings`);
  }));
 
@@ -121,6 +151,7 @@ app.put('/listings/:id',wrapAsync(async (req,res)=>{
      app.delete('/listings/:id',wrapAsync(async (req,res)=>{
          const {id}=req.params;
          await Listing.findByIdAndDelete(id);
+          req.flash('success','Successfully deleted a listing');
          res.redirect('/listings');
      }));
 
