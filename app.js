@@ -86,7 +86,7 @@ const validateReview=(req,res,next)=>{
 };
 
 app.get('/',(req,res)=>{
-    res.send("Wapas jaa lavde....");
+   res.render("listings/dashboard.ejs");
 });
 
 
@@ -154,8 +154,6 @@ app.put('/listings/:id',wrapAsync(async (req,res)=>{
           req.flash('success','Successfully deleted a listing');
          res.redirect('/listings');
      }));
-
-
 
   
 //reviews route  post route

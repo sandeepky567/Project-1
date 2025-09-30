@@ -1,0 +1,420 @@
+<% layout('layouts/boilerplate') -%>
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Search Page Clone</title>
+    <style>
+        /* --- General Reset & Variables --- */
+        :root {
+            --primary-blue: #007bff; /* Similar to the search button blue */
+            --text-dark: #333;
+            --text-medium: #555;
+            --text-light: #777;
+            --border-color: #e0e0e0;
+            --bg-light: #f8f9fa;
+            --card-bg: white;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --border-radius-default: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: white; /* Clean white background */
+            line-height: 1.6;
+            color: var(--text-dark);
+            padding-top: 20px; /* Some top padding for the whole page */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--text-dark);
+            text-align: left;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            text-align: left;
+        }
+
+        /* --- Header/Navigation (Optional, assuming this page is part of a larger site) --- */
+        /* If you need a nav bar like the previous example, you would add it here */
+
+        /* --- Search Form Section --- */
+        .search-section {
+            margin-bottom: 40px;
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+            gap: 15px; /* Spacing between search inputs */
+            align-items: flex-end; /* Align inputs to the bottom */
+            background-color: white;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color); /* Separator line */
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            flex: 1; /* Allow items to grow and shrink */
+            min-width: 200px; /* Minimum width for each input */
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-default);
+            font-size: 16px;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .search-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius-default);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            height: 48px; /* Match input height */
+            flex-shrink: 0; /* Don't shrink the button */
+        }
+
+        .search-btn:hover {
+            background-color: #0056b3; /* Darker shade of blue */
+        }
+
+        .add-flight-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-medium);
+            text-align: left;
+            width: 100%; /* Take full width below search inputs */
+        }
+
+        /* --- Ideas/Promotional Section --- */
+        .ideas-section {
+            margin-bottom: 50px;
+        }
+
+        .ideas-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .main-idea-card {
+            flex: 2; /* Main card takes more space */
+            min-width: 400px; /* Minimum width for main card */
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-default);
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-idea-card img {
+            width: 100%;
+            height: 250px; /* Fixed height for consistency */
+            object-fit: cover;
+        }
+
+        .main-idea-card .card-text-content {
+            padding: 20px;
+            text-align: left;
+        }
+
+        .main-idea-card h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .main-idea-card p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .side-idea-cards {
+            flex: 1; /* Side cards take remaining space */
+            min-width: 300px; /* Minimum width for side column */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .side-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-default);
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            text-align: left;
+            padding: 15px; /* Adjust padding as needed */
+        }
+
+        .side-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--border-radius-default);
+            margin-right: 15px;
+            flex-shrink: 0; /* Prevent image from shrinking */
+        }
+
+        .side-card .card-text-content h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .side-card .card-text-content p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* --- Trending Destinations Section --- */
+        .trending-section {
+            margin-bottom: 50px;
+        }
+
+        .destination-cards-wrapper {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto; /* Allows horizontal scrolling */
+            padding-bottom: 10px; /* Space for scrollbar */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .destination-cards-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .destination-card {
+            flex: 0 0 250px; /* Fixed width, no shrinking, no growing */
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-default);
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none; /* Remove underline from anchor tag */
+            color: inherit; /* Inherit text color */
+        }
+
+        .destination-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .destination-card .card-text-content {
+            padding: 15px;
+        }
+
+        .destination-card h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .destination-card p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 992px) {
+            .ideas-content {
+                flex-direction: column;
+            }
+            .main-idea-card, .side-idea-cards {
+                min-width: unset; /* Remove min-width to allow full width */
+                flex: 1 1 100%; /* Take full width */
+            }
+        }
+
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 28px;
+            }
+            h3 {
+                font-size: 20px;
+            }
+            .search-form {
+                flex-direction: column; /* Stack inputs vertically */
+                align-items: stretch; /* Stretch items to full width */
+            }
+            .input-group {
+                min-width: unset;
+                width: 100%;
+            }
+            .search-btn {
+                width: 100%;
+            }
+            .side-card {
+                flex-direction: column; /* Stack image and text vertically */
+                text-align: center;
+            }
+            .side-card img {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            .destination-card {
+                flex: 0 0 200px; /* Make cards slightly smaller on smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            .main-idea-card img {
+                height: 180px;
+            }
+            .side-card img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="search-section-title">Search hotels</h2>
+
+        <section class="search-section">
+            <div class="search-form">
+                <div class="input-group">
+                    <label for="destination">Where to?</label>
+                    <input type="text" id="destination" placeholder="Where to?">
+                </div>
+                <div class="input-group">
+                    <label for="dates">Dates</label>
+                    <input type="text" id="dates" value="10 Oct - 16 Oct">
+                </div>
+                <div class="input-group">
+                    <label for="travellers">Travellers</label>
+                    <input type="text" id="travellers" value="2 travellers, 1 room">
+                </div>
+                <button class="search-btn">Search</button>
+            </div>
+            <div class="add-flight-checkbox">
+                <input type="checkbox" id="add-flight">
+                <label for="add-flight">Add a flight</label>
+            </div>
+        </section>
+
+        <section class="ideas-section">
+            <h3>Ideas for your next trip</h3>
+            <div class="ideas-content">
+                <div class="main-idea-card">
+                    <img src="https://seawatersports.com/images/activies/slide/hot-air-balloon-in-himachal-timing.png" alt="Hot air balloons over a lake with mountains">
+                    <div class="card-text-content">
+                        <h4>Free cancellation on most hotels</h4>
+                        <p>Because flexibility matters.</p>
+                    </div>
+                </div>
+                <div class="side-idea-cards">
+                    <div class="side-card">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="People walking">
+                        <div class="card-text-content">
+                            <h4>Last minute deals are available</h4>
+                            <p>Find your next getaway</p>
+                        </div>
+                    </div>
+                    <div class="side-card">
+                        <img src="https://images.unsplash.com/photo-1461237439866-5a557710c921?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Z3JvdXAlMjB0b3VyfGVufDB8fDB8fHww" alt="Scenic view">
+                        <div class="card-text-content">
+                            <h4>When you're ready to get away, we'll be ready to inspire you</h4>
+                            <p>Trip ideas and inspiration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="trending-section">
+            <h3>Explore stays in trending destinations</h3>
+            <div class="destination-cards-wrapper">
+                <a href="#" class="destination-card">
+                    <img src="https://www.onthegotours.com/repository/The-Taj-Mahal--India-Tours--On-The-Go-Tours-298431462895266.jpg" alt="Agra">
+                    <div class="card-text-content">
+                        <h4>Agra</h4>
+                        <p>Uttar Pradesh</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://visitkashi.in/backend/admin/product_images/168128064972.jpg" alt="Varanasi">
+                    <div class="card-text-content">
+                        <h4>Varanasi</h4>
+                        <p>Uttar Pradesh</p>
+                    </div>
+                </a>
+                
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://c.ndtvimg.com/2025-01/tuhgraag_shimla_625x300_31_January_25.jpg?im=FaceCrop,algorithm=dnn,width=1200,height=738" alt="Dubai skyline">
+                    <div class="card-text-content">
+                        <h4>Shimla</h4>
+                        <p>Himachal Pradesh</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://s7ap1.scene7.com/is/image/incredibleindia/lake-pichola-udaipur-rajasthan-2-attr-hero?qlt=82&ts=1742161994371" alt="New York City">
+                    <div class="card-text-content">
+                        <h4>Udaipur</h4>
+                        <p>Rajasthan</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
