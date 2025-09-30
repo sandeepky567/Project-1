@@ -1,10 +1,7 @@
 body{
     background-color: black;
     font-family: 'Plus Jakarta Sans', sans-serif !important;   
-         background-color: white; /* Clean white background */
-            line-height: 1.6;
-            color: var(--text-dark);
-            padding-top: 20px; /* Some top padding for the whole page */ 
+     
 }
 
 
