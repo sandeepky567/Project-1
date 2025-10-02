@@ -20,11 +20,11 @@ async function main() {
 }
 
 // --- 2. Database Initialization Function ---
-
 const initdb = async () => {
     // 1. Delete ALL previous data from the collection
     await Listing.deleteMany({});
     console.log("Old data deleted.");
+    initData.data = initData.data.map((obl) => ({ ...obl, owner: "68de07885631d1a2a5b354e5" }));
 
     // 2. Prepare/Normalize the data for insertion
     const normalizedData = initData.data.map(listing => ({

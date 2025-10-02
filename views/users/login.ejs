@@ -1,0 +1,30 @@
+<% layout('layouts/boilerplate') -%>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">User Login</h1>
+                <form action="/login" method="POST" class="needs-validation" novalidate>
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required autofocus>
+                        <div class="invalid-feedback">
+                            Please enter your username.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="invalid-feedback">
+                            Please enter your password.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 mt-3">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -13,7 +13,10 @@ const { reviewSchema } = require('./schema.js');
 const Review = require('./models/review.js');
 const session=require('express-session');
 const flash=require('connect-flash');
-
+const passport=require('passport');
+const LocalStrategy=require('passport-local');
+const User=require('./models/user.js');
+const{saveRedirectUrl, isOwner,isLoggedIn, isAuthor}=require('./middleware.js');
 // const listings=require('./routes/listings.js');
 // app.use('/listings',listings);
 
@@ -55,10 +58,17 @@ const sessionOptions={
 app.use(session(sessionOptions));
 app.use(flash()); 
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.use((req,res,next)=>{
     res.locals.success=req.flash('success');
     res.locals.error=req.flash('error');
+    res.locals.currentUser=req.user;
     next();
 }
 );
@@ -85,6 +95,10 @@ const validateReview=(req,res,next)=>{
      
 };
 
+
+
+
+ 
 app.get('/',(req,res)=>{
    res.render("listings/dashboard.ejs");
 });
@@ -106,7 +120,7 @@ app.get('/listings/new',(req,res)=>{
 //show route
 app.get('/listings/:id',wrapAsync(async (req,res)=>{
     const {id}=req.params;
-    const listing=await Listing.findById(id).populate('reviews');
+    const listing=await Listing.findById(id).populate({path:'reviews', populate: {path: 'author',select: 'username'}}).populate("owner");
     if(!listing){
         req.flash('error','Cannot find that listing!');
         return res.redirect('/listings');
@@ -116,11 +130,13 @@ app.get('/listings/:id',wrapAsync(async (req,res)=>{
 
 
 //create route
-app.post('/listings',validateListing,
+app.post('/listings',isLoggedIn,validateListing,
+  
     wrapAsync(async (req,res,next)=>{
 
     
   const newlisting=new Listing(req.body.listing);
+  newlisting.owner=req.user._id;
   await newlisting.save();
   req.flash('success','Successfully made a new listing');
   res.redirect(`/listings`);
@@ -128,27 +144,38 @@ app.post('/listings',validateListing,
 }));
 
 //edit route
-app.get('/listings/:id/edit',wrapAsync(async (req,res)=>{
+app.get('/listings/:id/edit',
+    isLoggedIn,
+     isOwner
+     ,wrapAsync(async (req,res)=>{
     const {id}=req.params;
     const listing=await Listing.findById(id);
-     req.flash('success','Successfully edited a listing');
+     if(!listing){
+        req.flash('error','Cannot find that listing!');
+        res.redirect('/listings');
+    }
     res.render("listings/edit.ejs",{listing});
 }));
 
 //update route
-app.put('/listings/:id',wrapAsync(async (req,res)=>{
+app.put('/listings/:id',
+    isLoggedIn,
+     isOwner,
+    wrapAsync(async (req,res)=>{
     if(!req.body.listing){
         throw new ExpressError(400,"Invalid Listing Data");
     }
-    const {id}=req.params;
-    const listing=await Listing.findByIdAndUpdate(id,req.body.listing,{runValidators:true,new:true});
+    const {id}=req.params; 
+    await Listing.findByIdAndUpdate(id,{...req.body.listing});
      req.flash('success','Successfully updated a listing');
     res.redirect(`/listings`);
  }));
 
- 
+   
  //delete route
-     app.delete('/listings/:id',wrapAsync(async (req,res)=>{
+     app.delete('/listings/:id',
+        isLoggedIn,
+     isOwner,wrapAsync(async (req,res)=>{
          const {id}=req.params;
          await Listing.findByIdAndDelete(id);
           req.flash('success','Successfully deleted a listing');
@@ -156,12 +183,65 @@ app.put('/listings/:id',wrapAsync(async (req,res)=>{
      }));
 
   
+
+
+//sighup route
+  app.get('/signup',(req,res)=>{
+    res.render('users/signup.ejs');
+});
+
+
+
+app.post('/signup',wrapAsync(async (req,res,next)=>{
+    try{
+    let {username,email,password}=req.body;
+    const newuser=new User({username,email});
+   const registereduser= await User.register(newuser,password);
+   console.log(registereduser);
+    req.login(registereduser,err=>{
+        if(err) return next(err);
+        req.flash('success','Welcome to BookMyLand');
+        res.redirect('/listings');
+    });
+//    req.flash('success','Welcome to BookMyLand');
+//    res.redirect('/listings');
+    }catch(e){
+        req.flash('error',e.message);
+        res.redirect('/signup');
+    }
+}));
+
+app.get('/login', (req, res) => {
+    // This renders the login form to the user
+    res.render('users/login.ejs'); // Assuming your login file is called 'login.ejs'
+});
+
+app.post('/login',saveRedirectUrl, passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
+    req.flash('success', 'Welcome back!');
+    const redirectUrl=res.locals.redirectUrl || '/listings';
+    delete req.session.redirectUrl;
+    res.redirect(redirectUrl);
+});
+ 
+
+//logout
+app.get('/logout', (req, res, next) => {
+    req.logout((err)=> {
+        if (err) {next(err); }
+        req.flash('success', 'Goodbye!');
+        res.redirect('/listings');
+    });
+});
+
+
+
 //reviews route  post route
-app.post('/listings/:id/reviews',validateReview, wrapAsync(async (req, res) => {
+app.post('/listings/:id/reviews',isLoggedIn,validateReview, wrapAsync(async (req, res) => {
 
     
     let listing = await Listing.findById(req.params.id);
     let review = new Review(req.body.review);
+    review.author = req.user._id;
 
     // // ✅ FIX: Check if listing.reviews is undefined and initialize it
     // if (!listing.reviews) {
@@ -176,7 +256,7 @@ app.post('/listings/:id/reviews',validateReview, wrapAsync(async (req, res) => {
 }));
 
 //delete review route
-  app.delete('/listings/:id/reviews/:reviewId', wrapAsync(async (req, res) => {
+  app.delete('/listings/:id/reviews/:reviewId',isLoggedIn,isAuthor, wrapAsync(async (req, res) => {
     let { id, reviewId } = req.params;
     await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
