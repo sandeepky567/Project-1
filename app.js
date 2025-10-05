@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app=express();
 const mongoose=require('mongoose');
@@ -17,6 +18,9 @@ const passport=require('passport');
 const LocalStrategy=require('passport-local');
 const User=require('./models/user.js');
 const{saveRedirectUrl, isOwner,isLoggedIn, isAuthor}=require('./middleware.js');
+const multer  = require('multer');
+
+
 // const listings=require('./routes/listings.js');
 // app.use('/listings',listings);
 
@@ -101,6 +105,7 @@ const validateReview=(req,res,next)=>{
  
 app.get('/',(req,res)=>{
    res.render("listings/dashboard.ejs");
+  
 });
 
 
@@ -127,7 +132,7 @@ app.get('/listings/:id',wrapAsync(async (req,res)=>{
     }
     res.render("listings/show.ejs",{listing});
 }));
-
+  
 
 //create route
 app.post('/listings',isLoggedIn,validateListing,
@@ -142,6 +147,32 @@ app.post('/listings',isLoggedIn,validateListing,
   res.redirect(`/listings`);
 
 }));
+// app.post('/listings',
+//     isLoggedIn,
+//     // Multer middleware to process 'listing[image]' and store it on the cloud
+//     upload.single('listing[image]'),
+//     validateListing,
+//     wrapAsync(async (req, res) => {
+//         // --- PRODUCTION LOGIC ---
+//         const newlisting = new Listing(req.body.listing);
+//         newlisting.owner = req.user._id;
+
+//         // Extract image info from req.file and save it to the listing
+//         if (req.file) {
+//             newlisting.image = {
+//                 url: req.file.path,
+//                 filename: req.file.filename,
+//             };
+//         }
+
+//         await newlisting.save();
+//         req.flash('success', 'Successfully made a new listing');
+//          req.send(req.file);
+//         // res.redirect(`/listings/${newlisting._id}`); // Redirect to the show page
+//     }));
+
+
+
 
 //edit route
 app.get('/listings/:id/edit',
