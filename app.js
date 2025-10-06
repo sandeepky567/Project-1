@@ -185,6 +185,7 @@ app.get('/listings/:id/edit',
         req.flash('error','Cannot find that listing!');
         res.redirect('/listings');
     }
+       
     res.render("listings/edit.ejs",{listing});
 }));
 
