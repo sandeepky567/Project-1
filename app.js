@@ -13,13 +13,14 @@ const { listingSchema } = require('./schema.js');
 const { reviewSchema } = require('./schema.js');
 const Review = require('./models/review.js');
 const session=require('express-session');
+const MongoStore =require('connect-mongo');
 const flash=require('connect-flash');
 const passport=require('passport');
 const LocalStrategy=require('passport-local');
 const User=require('./models/user.js');
 const{saveRedirectUrl, isOwner,isLoggedIn, isAuthor}=require('./middleware.js');
 const multer  = require('multer');
-
+require('dotenv').config(); 
 
 // const listings=require('./routes/listings.js');
 // app.use('/listings',listings);
@@ -27,10 +28,10 @@ const multer  = require('multer');
 // const reviews=require('./routes/review.js');
 // app.use('/listings/:id/reviews',reviews);
    
-
+const dburl=process.env.ATLASDB_URL;
 async function   main(){
-     const mongourl="mongodb://127.0.0.1:27017/bookmyland";
-    await mongoose.connect(mongourl);
+    const dburl=process.env.ATLASDB_URL;
+    await mongoose.connect(dburl);
 }
 main().then(()=>{
     console.log("connected to db");   
@@ -47,8 +48,19 @@ app.use(methodOverride('_method'));
 app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,'public')));
 
+const store=MongoStore.create({
 
+    mongoUrl:dburl,
+    crypto:{
+        secret:"mysupersecret"
+    },
+    touchAfter:24*3600,
 
+});
+
+store.on("error",()=>{
+    console.log("Error in mongo session");
+});
 const sessionOptions={
     secret:"mysuppersecret",
     resave:false,
@@ -59,6 +71,8 @@ const sessionOptions={
         httpOnly:true
     },
 };
+
+
 app.use(session(sessionOptions));
 app.use(flash()); 
 

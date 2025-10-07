@@ -1,11 +1,61 @@
 <% layout('layouts/boilerplate') -%>
-<body>
+  <style>
+#filters {
+  display: flex;
+  flex-wrap: wrap;
+}
+.filter {
+  text-align: center;
+  margin-right: 2rem;
+  margin-top: 2rem;
+  opacity: 0.7 ;
+}
+.filter:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+  </style>
 
       <!-- <h1>All Listings</h1>
         <form method="GET" action="/listings/new">
         <button>Create New Listing</button> -->
-    </form>
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
+    <!-- </form> -->
+     <div id="filters">
+        <div class="filter">
+          <div><i class="fa-solid fa-fire"></i></div>
+          <p>Trending</p>
+        </div>
+         <div class="filter">
+          <div><i class="fa-solid fa-bed"></i></div>
+          <p>Rooms</p>
+        </div>  
+        <div class="filter">
+          <div><i class="fa-solid fa-mountain"></i></div>
+          <p>Mountains</p>
+        </div>
+         <div class="filter">
+          <div><i class="fa-solid fa-fort-awesome"></i></div>
+          <p>Castles</p>
+        </div>
+        <div class="filter">
+          <div><i class="fa-solid fa-person-swimming"></i></div>
+          <p>Amazing Pools</p>
+        </div>
+         <div class="filter">
+          <div><i class="fa-solid fa-campground"></i></div>
+          <p>Camping</p>
+        </div>
+         <div class="filter">
+          <div><i class="fa-solid fa-fort-snowflake"></i></div>
+          <p>Arctic</p>
+        </div>
+        <div class="filter">
+          <div><i class="fa-solid fa-person-swimming"></i></div>
+          <p>Amazing Pools</p>
+        </div> 
+     </div>
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4 mt-3">
     
     <% for(let listing of alllistings) { %>
       <a href="/listings/<%= listing._id %>" class="listing-link">
@@ -39,4 +89,4 @@
           <li><a href="/listings/<%= listing._id %>"><%= listing.title %> - <%= listing.price %></a></li>
         <% } %>
       </ul> -->
-</body>
+
