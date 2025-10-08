@@ -1,8 +1,7 @@
 {
   "engines": {
     "node": "23.6.0"
-  
-},
+  },
   "name": "bookmyland",
   "version": "1.0.0",
   "main": "index.js",
