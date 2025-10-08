@@ -1,30 +1,109 @@
 <% layout('layouts/boilerplate') -%>
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="card shadow">
-            <div class="card-body">
-                <h1 class="card-title text-center mb-4">User Login</h1>
-                <form action="/login" method="POST" class="needs-validation" novalidate>
-                    
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username:</label>
-                        <input type="text" class="form-control" id="username" name="username" required autofocus>
-                        <div class="invalid-feedback">
-                            Please enter your username.
-                        </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <div class="invalid-feedback">
-                            Please enter your password.
-                        </div>
-                    </div>
+<style>
+    /* Center the login card vertically and horizontally */
+    .login-page {
+        min-height: calc(100vh - 80px); /* leave room for navbar */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+        background: linear-gradient(180deg, #f7fbff 0%, #ffffff 60%);
+    }
 
-                    <button type="submit" class="btn btn-success w-100 mt-3">Login</button>
-                </form>
+    .login-card {
+        width: 100%;
+        max-width: 480px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(15, 41, 77, 0.08);
+        overflow: hidden;
+        padding: 28px 28px;
+        border: 1px solid rgba(20,40,80,0.04);
+    }
+
+    .login-brand {
+        display: block;
+        margin: 0 auto 12px auto;
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(22,45,90,0.06);
+    }
+
+    .login-title {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #112233;
+    }
+
+    .login-sub {
+        text-align: center;
+        color: #556677;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px 12px;
+        border: 1px solid #e6e9ef;
+    }
+
+    .btn-login {
+        background: linear-gradient(90deg,#FF6B6B,#FF3B3B);
+        border: none;
+        color: white;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 10px 14px;
+        box-shadow: 0 6px 18px rgba(255,59,59,0.12);
+    }
+
+    .helper-row {
+        display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:14px;
+    }
+
+    .text-link { color:#2b6cff; text-decoration:none; }
+    .text-link:hover { text-decoration:underline; }
+
+    @media (max-width:576px){
+        .login-card{ padding:20px; margin: 0 8px; }
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+      
+        <div class="login-title">Welcome back</div>
+        <div class="login-sub">Sign in to continue to BookMyHotel</div>
+
+        <form action="/login" method="POST" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required autofocus>
+                <div class="invalid-feedback">Please enter your username.</div>
             </div>
-        </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="invalid-feedback">Please enter your password.</div>
+            </div>
+
+            <button type="submit" class="btn btn-login w-100 mt-2">Sign in</button>
+
+            <div class="helper-row">
+                <div><label class="form-check-label"><input type="checkbox" class="form-check-input me-1"> Remember me</label></div>
+                <div><a href="/signup" class="text-link">Create account</a></div>
+            </div>
+
+            <div style="text-align:center; margin-top:14px;">
+                <a href="/" class="text-link">Back to home</a>
+            </div>
+        </form>
     </div>
 </div>

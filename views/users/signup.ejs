@@ -1,20 +1,47 @@
 <% layout('layouts/boilerplate') -%>
-    <div class="row">
-         <div class="col-md-6 offset-md-1.8">
-             <h1>Sign Up</h1>
-             <form action="/signup" method="POST" class="needs-validation" novalidate>
-                 <div class="mb-3">
-                     <label for="username" class="form-label">Username:</label>
-                     <input type="text" class="form-control" id="username" name="username" required>
-                 </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                 <button type="submit" class="btn btn-primary">Sign Up</button>
-             </form>
-         </div>
+
+<style>
+    /* Reuse login card styles for signup to keep consistent look */
+    .login-page { min-height: calc(100vh - 80px); display:flex; align-items:center; justify-content:center; padding:40px 16px; background: linear-gradient(180deg, #f7fbff 0%, #ffffff 60%);} 
+    .login-card { width:100%; max-width:520px; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(15,41,77,0.06); padding:28px; border:1px solid rgba(20,40,80,0.04);} 
+    .login-brand { display:block; margin:0 auto 12px; width:72px; height:72px; object-fit:cover; border-radius:10px; }
+    .login-title { text-align:center; font-size:22px; font-weight:700; margin-bottom:6px; }
+    .login-sub { text-align:center; color:#556677; margin-bottom:18px; }
+    .form-control { border-radius:8px; padding:10px 12px; border:1px solid #e6e9ef; }
+    .btn-signup { background: linear-gradient(90deg,#3b82f6,#2563eb); color:#fff; font-weight:700; border-radius:8px; padding:10px 14px; border:none; }
+    @media (max-width:576px){ .login-card{ padding:20px; } }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+       
+        <div class="login-title">Create an account</div>
+        <div class="login-sub">Get started with BookMyHotel</div>
+
+        <form action="/signup" method="POST" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+                <div class="invalid-feedback">Please choose a username.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+                <div class="invalid-feedback">Please enter a valid email.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="invalid-feedback">Please enter a password.</div>
+            </div>
+
+            <button type="submit" class="btn btn-signup w-100 mt-2">Create account</button>
+
+            <div style="text-align:center; margin-top:12px;">
+                <a href="/login" class="text-link">Already have an account? Sign in</a>
+            </div>
+        </form>
+    </div>
+</div>
