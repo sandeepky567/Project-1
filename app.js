@@ -167,7 +167,7 @@ app.get('/listings/:id/edit',
     }
     res.render("listings/edit.ejs",{listing});
 }));
-
+  
 //update route
 app.put('/listings/:id',
     isLoggedIn,
