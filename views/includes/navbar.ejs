@@ -1,6 +1,35 @@
-<nav class="navbar navbar-expand-md border-bottom bg-body-tertiary sticky-top">
+<nav class="navbar navbar-expand-md border-bottom bg-body-tertiary sticky-top navbar-custom">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/" ><i class="fa-solid fa-hand-middle-finger"></i></a>
+    <style>
+      /* Navbar custom sizing and spacing */
+      .navbar-custom {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      .navbar-custom .navbar-brand img {
+        height: 48px;
+        width: auto;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+      .navbar-custom .navbar-nav .nav-link {
+        padding: 0.6rem 1rem; /* increased clickable area */
+        margin-right: 0.4rem;
+        font-weight: 600;
+      }
+      /* Add extra spacing for right-side links */
+      .navbar-custom .navbar-nav.ms-auto .nav-link {
+        margin-left: 0.6rem;
+      }
+      /* On very small screens, slightly reduce padding to fit */
+      @media (max-width: 575.98px) {
+        .navbar-custom .navbar-nav .nav-link { padding: 0.45rem 0.6rem; }
+        .navbar-custom .navbar-brand img { height: 40px; }
+      }
+    </style>
+    <a class="navbar-brand" href="/">
+      <img src="/images/logo.png" alt="BookMyHotel" />
+    </a>
     <button class="navbar-toggler"
             type="button" 
             data-bs-toggle="collapse" 
@@ -23,7 +52,7 @@
           <a class="nav-link" href="/login"><b>Login</b></a>
         <% } else { %>
           <span class="navbar-text me-2">Hello, <%= currentUser.username %></span>
-          <a class="nav-link" href="/logout"><b></b>Logout</b></a>
+          <a class="nav-link" href="/logout"><b>Logout</b></a>
         <% } %>
     </div>
   </div>

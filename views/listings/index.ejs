@@ -1,27 +1,69 @@
 <% layout('layouts/boilerplate') -%>
   <style>
+.filters-wrapper {
+  margin-top: 1.25rem; /* little space from top */
+}
 #filters {
   display: flex;
   flex-wrap: wrap;
+  gap: 1.5rem 2rem; /* row-gap column-gap */
+  align-items: center;
 }
 .filter {
   text-align: center;
-  margin-right: 2rem;
-  margin-top: 2rem;
-  opacity: 0.7 ;
+  opacity: 0.85;
+  padding: 0.4rem 0.25rem;
 }
 .filter:hover {
   opacity: 1;
   cursor: pointer;
+  transform: translateY(-3px);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.popular-filters {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.fav-heart {
+  color: #ff3b3b; /* bright red (controls svg fill via currentColor) */
+  width: 34px; /* larger size */
+  height: 34px;
+  display: inline-block;
+  padding: 4px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.95);
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.fav-heart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor; /* use .fav-heart color */
+}
+
+.fav-heart {
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+}
+
+.fav-heart.favorited {
+  background: #ff3b3b; /* filled red */
+  color: #fff; /* heart becomes white on red */
+  transform: scale(1.05);
 }
 
   </style>
 
-      <!-- <h1>All Listings</h1>
-        <form method="GET" action="/listings/new">
-        <button>Create New Listing</button> -->
-    <!-- </form> -->
-     <div id="filters">
+  <div class="filters-wrapper">
+    <div class="popular-filters">Popular filters</div>
+    <div id="filters">
         <div class="filter">
           <div><i class="fa-solid fa-fire"></i></div>
           <p>Trending</p>
@@ -30,35 +72,41 @@
           <div><i class="fa-solid fa-bed"></i></div>
           <p>Rooms</p>
         </div>  
-        <div class="filter">
+        <div class="filter" data-tag="mountains">
           <div><i class="fa-solid fa-mountain"></i></div>
           <p>Mountains</p>
         </div>
-         <div class="filter">
+         <div class="filter" data-tag="castles">
           <div><i class="fa-solid fa-fort-awesome"></i></div>
           <p>Castles</p>
         </div>
-        <div class="filter">
+        <div class="filter" data-tag="amazing-pools">
           <div><i class="fa-solid fa-person-swimming"></i></div>
           <p>Amazing Pools</p>
         </div>
-         <div class="filter">
+        <div class="filter">
+          <div><i class="fa-solid fa-umbrella-beach"></i></div>
+          <p>Beach</p>
+        </div>
+        <div class="filter">
+          <div><i class="fa-solid fa-city"></i></div>
+          <p>City</p>
+        </div>
+         <div class="filter" data-tag="camping">
           <div><i class="fa-solid fa-campground"></i></div>
           <p>Camping</p>
         </div>
-         <div class="filter">
-          <div><i class="fa-solid fa-fort-snowflake"></i></div>
-          <p>Arctic</p>
-        </div>
+       
         <div class="filter">
           <div><i class="fa-solid fa-person-swimming"></i></div>
           <p>Amazing Pools</p>
         </div> 
      </div>
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4 mt-3">
+     </div>
+  <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 g-5 mt-4">
     
     <% for(let listing of alllistings) { %>
-      <a href="/listings/<%= listing._id %>" class="listing-link">
+      <a href="/listings/<%= listing._id %>" class="listing-link" data-id="<%= listing._id %>" data-location="<%= listing.location ? listing.location : '' %>" data-title="<%= listing.title ? listing.title.replace(/"/g,'&quot;') : '' %>" data-desc="<%= listing.description ? listing.description.replace(/"/g,'&quot;') : '' %>">
          <div class="card col listings-card">
            
     <img src="<%= typeof listing.image === 'object' ? listing.image.url : (listing.image || '/images/default.jpg') %>"
@@ -66,7 +114,7 @@
      alt="listing_image"
      style="height: 20rem;">
      
-            <div class="card-img-overlay"> ass</div>
+            <div class="card-img-overlay"><span class="fav-heart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg></span></div>
             <div class="card-body">
               <p class="card-text">
                <b><%= listing.title %></b><br>
@@ -78,6 +126,89 @@
       </a>
    <% } %>
   </div>
+
+  <script>
+    // Filter toggle and simple client-side filtering
+    (function(){
+      const filters = document.querySelectorAll('#filters .filter');
+      const listingLinks = document.querySelectorAll('.listing-link');
+
+      function normalize(text){
+        return (text||'').toString().toLowerCase();
+      }
+
+      function applyFilters(){
+        const active = Array.from(filters).filter(f=>f.classList.contains('active'));
+        if(active.length === 0){
+          listingLinks.forEach(l=> l.style.display='');
+          return;
+        }
+        const criteria = active.map(a => a.dataset.tag && a.dataset.tag.toLowerCase()).filter(Boolean);
+
+        listingLinks.forEach(link=>{
+          const loc = normalize(link.dataset.location);
+          const title = normalize(link.dataset.title);
+          const desc = normalize(link.dataset.desc);
+
+          // For each active criteria, require that at least one of (location/title/desc) contains it
+          const pass = criteria.every(c => {
+            return loc.includes(c) || title.includes(c) || desc.includes(c);
+          });
+          link.style.display = pass ? '' : 'none';
+        });
+      }
+
+      filters.forEach(f=>{
+        f.addEventListener('click', ()=>{
+          f.classList.toggle('active');
+          applyFilters();
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    // Favorite heart toggle: persist in localStorage and prevent navigation when clicking heart
+    (function(){
+      const storageKey = 'bmh_favorites';
+      const hearts = document.querySelectorAll('.fav-heart');
+
+      function loadFavs(){
+        try{ return JSON.parse(localStorage.getItem(storageKey)) || []; }catch(e){ return []; }
+      }
+      function saveFavs(arr){ localStorage.setItem(storageKey, JSON.stringify(arr)); }
+
+      const favs = new Set(loadFavs());
+
+      hearts.forEach(h => {
+        // find the related listing id by walking up to .listing-link
+        const link = h.closest('.listing-link');
+        const id = link && link.dataset && link.dataset.id ? link.dataset.id : (link ? (link.getAttribute('href')||'').split('/').pop() : null);
+        if(!id) return;
+        if(favs.has(id)) h.classList.add('favorited');
+
+        h.addEventListener('click', function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          if(h.classList.contains('favorited')){
+            h.classList.remove('favorited');
+            favs.delete(id);
+          } else {
+            h.classList.add('favorited');
+            favs.add(id);
+          }
+          saveFavs(Array.from(favs));
+        });
+      });
+
+      // Prevent clicks inside the overlay from navigating when not clicking the heart
+      document.querySelectorAll('.card-img-overlay').forEach(ov => {
+        ov.addEventListener('click', function(e){
+          // if click target is the overlay (not the heart), allow it to bubble to link
+        });
+      });
+    })();
+  </script>
 
       
    

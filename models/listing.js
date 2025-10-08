@@ -10,10 +10,10 @@ const listingSchema = new Schema({
     },
     description: String,
     image: {
-         default: 'https://images.unsplash.com/photo-1585245793787-ba3b6539f98d?q=80&w=712&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+         default: 'https://static2.tripoto.com/media/filter/nl/img/15546/TripDocument/1448884461_01_exterior_dusk_1_lg_47_fotor.jpg',
         type: String,
      
-        set:(v)=> v===''?'https://images.unsplash.com/photo-1585245793787-ba3b6539f98d?q=80&w=712&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        set:(v)=> v===''?'https://static2.tripoto.com/media/filter/nl/img/15546/TripDocument/1448884461_01_exterior_dusk_1_lg_47_fotor.jpg'
         :v
           
     },
