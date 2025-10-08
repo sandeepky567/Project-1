@@ -14,9 +14,13 @@ main()
         console.log("Error connecting to DB:", err);
     });
 
+// async function main() {
+//     const mongourl = "mongodb://127.0.0.1:27017/bookmyland";
+//     await mongoose.connect(mongourl);
+// }
+const dburl = process.env.ATLASDB_URL;
 async function main() {
-    const mongourl = "mongodb://127.0.0.1:27017/bookmyland";
-    await mongoose.connect(mongourl);
+    await mongoose.connect(dburl);
 }
 
 // --- 2. Database Initialization Function ---

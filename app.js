@@ -121,6 +121,31 @@ app.get('/listings',wrapAsync(async (req,res)=>{
     res.render("listings/index.ejs",{alllistings})
 }));
 
+// Varanasi listings route - shows listings with location 'Varanasi' (case-insensitive)
+app.get('/listings/varanasi', wrapAsync(async (req, res) => {
+    // Use a case-insensitive partial regex to match 'varanasi' anywhere in the location field
+    const listings = await Listing.find({ location: { $regex: /varanasi/i } });
+    res.render('listings/varanasi.ejs', { listings });
+}));
+
+// Agra listings route
+app.get('/listings/agra', wrapAsync(async (req, res) => {
+    const listings = await Listing.find({ location: { $regex: /agra/i } });
+    res.render('listings/agra.ejs', { listings });
+}));
+
+// Shimla listings route
+app.get('/listings/shimla', wrapAsync(async (req, res) => {
+    const listings = await Listing.find({ location: { $regex: /shimla/i } });
+    res.render('listings/shimla.ejs', { listings });
+}));
+
+// Udaipur listings route
+app.get('/listings/udaipur', wrapAsync(async (req, res) => {
+    const listings = await Listing.find({ location: { $regex: /udaipur/i } });
+    res.render('listings/udaipur.ejs', { listings });
+}));
+
 
 //New and create route
 app.get('/listings/new',(req,res)=>{

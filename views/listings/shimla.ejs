@@ -1,0 +1,42 @@
+<% layout('layouts/boilerplate') -%>
+	<style>
+#filters {
+	display: flex;
+	flex-wrap: wrap;
+}
+.filter {
+	text-align: center;
+	margin-right: 2rem;
+	margin-top: 2rem;
+	opacity: 0.7 ;
+}
+.filter:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+
+	</style>
+
+	<h2>Listings in Shimla</h2>
+	<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4 mt-3">
+		<% for(let listing of listings) { %>
+			<a href="/listings/<%= listing._id %>" class="listing-link">
+				 <div class="card col listings-card">
+    
+		<img src="<%= typeof listing.image === 'object' ? listing.image.url : (listing.image || '/images/default.jpg') %>"
+		 class="card-img-top"
+		 alt="listing_image"
+		 style="height: 20rem;">
+     
+						<div class="card-img-overlay"> </div>
+						<div class="card-body">
+							<p class="card-text">
+							 <b><%= listing.title %></b><br>
+								<%= listing.description %>
+							</p><br>
+							<p>&#x20b9;<%= listing.price.toLocaleString("en-IN") %>/night</p>
+						</div>
+				 </div>
+			</a>
+	 <% } %>
+	</div>
