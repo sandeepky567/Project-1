@@ -1,0 +1,173 @@
+<!-- Chatbot-scoped CSS only — no global selectors like * or body -->
+
+<!-- Chatbot Container -->
+<div class="chatbot-container" id="chatbot-container" aria-live="polite">
+    <div class="chatbot-header">
+        <span>BookMyHotel Assistant</span>
+        <button type="button" aria-label="Close chat" onclick="toggleChat()">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+        <div class="message-bubble bot-message">Welcome to BookMyHotel.com! How can I help you find the perfect hotel today?</div>
+    </div>
+    <div class="chatbot-input">
+        <input type="text" id="user-input" placeholder="Ask about rooms, prices, availability..." onkeydown="handleKey(event)">
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<div class="chatbot-toggle" id="chatbot-toggle" onclick="toggleChat()" title="Open chat">
+    <div class="bot-character" aria-hidden="true">
+        <div class="bot-head">
+            <div class="bot-antenna"></div>
+            <div class="bot-visor">
+                <div class="bot-visor-eye"></div>
+                <div class="bot-visor-eye"></div>
+            </div>
+            <div class="bot-headset"></div>
+        </div>
+        <div class="bot-body"></div>
+        <div class="chat-indicator"></div>
+    </div>
+</div>
+
+<style>
+/* Chatbot-scoped CSS only — no global selectors like * or body */
+
+/* Chatbot Container */
+.chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 400px;
+    height: 600px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(6px);
+    opacity: 0;
+    transition: transform 0.28s ease, opacity 0.28s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.chatbot-container.open { display:flex; transform: translateY(0); opacity:1; }
+
+/* Header */
+.chatbot-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 16px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.chatbot-header span { font-size:1.05rem; font-weight:700; }
+.chatbot-header button{ background: rgba(255,255,255,0.12); border:none; color:white; width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* Messages area */
+.chatbot-messages { flex:1; padding:18px; overflow-y:auto; background: linear-gradient(180deg,#f7f9ff 0%, #ffffff 100%); }
+.chatbot-messages::-webkit-scrollbar{ width:6px; }
+.chatbot-messages::-webkit-scrollbar-thumb{ background: linear-gradient(135deg,#1e3c72,#2a5298); border-radius:10px; }
+
+/* Bubbles */
+.message-bubble{ margin-bottom:12px; padding:12px 14px; border-radius:14px; max-width:80%; word-wrap:break-word; }
+.bot-message{ background: linear-gradient(135deg,#1e3c72 0%,#2a5298 100%); color:white; align-self:flex-start; padding-left:44px; position:relative; }
+.bot-message::after{ content:'🤖'; position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.95rem; }
+.user-message{ background: linear-gradient(135deg,#fa709a 0%,#fee140 100%); color:white; align-self:flex-end; margin-left:auto; }
+
+/* Input */
+.chatbot-input{ padding:12px 14px; background:#fff; display:flex; gap:10px; border-top:1px solid rgba(0,0,0,0.04); }
+.chatbot-input input{ flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); font-size:14px; background:#f3f7ff; }
+.chatbot-input button{ padding:10px 14px; background: linear-gradient(135deg,#1e3c72,#2a5298); color:white; border:none; border-radius:10px; cursor:pointer; }
+
+/* Toggle */
+.chatbot-toggle{ position:fixed; bottom:30px; right:30px; width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:1001; }
+.chatbot-toggle.chat-open{ display:none; }
+
+/* Bot character visuals (scoped) */
+.bot-character{ position:relative; width:70px; height:90px; display:flex; flex-direction:column; align-items:center; filter: drop-shadow(0 8px 25px rgba(30,60,114,0.45)); }
+.bot-head{ position:relative; width:55px; height:55px; background:white; border-radius:50%; border:3px solid #1e3c72; display:flex; align-items:center; justify-content:center; z-index:2; box-shadow:0 4px 14px rgba(0,0,0,0.18); }
+.bot-antenna{ position:absolute; top:-15px; left:50%; transform:translateX(-50%); width:2px; height:12px; background:#1e3c72; }
+.bot-visor{ width:40px; height:18px; background: linear-gradient(135deg,#1e3c72,#2a5298); border-radius:20px; display:flex; align-items:center; justify-content:center; gap:8px; padding:0 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.25); }
+.bot-visor-eye{ width:8px; height:8px; background:#4dd0e1; border-radius:50%; box-shadow:0 0 8px rgba(77,208,225,0.8); }
+.bot-headset{ position:absolute; right:-8px; bottom:10px; width:18px; height:18px; background:#1e3c72; border-radius:50%; border:2px solid white; }
+.bot-body{ width:50px; height:35px; background: linear-gradient(135deg,#e3f2fd 0%,#bbdefb 100%); border-radius:0 0 25px 25px; margin-top:-5px; border:3px solid #1e3c72; border-top:none; position:relative; }
+.chat-indicator{ position:absolute; bottom:5px; right:5px; width:16px; height:16px; background:#4ade80; border-radius:50%; border:3px solid white; z-index:3; box-shadow:0 0 10px rgba(74,222,128,0.6); }
+
+/* Loading */
+.loading-dots{ display:flex; gap:6px; padding:10px 0; }
+.loading-dot{ width:8px; height:8px; background:white; border-radius:50%; animation: loadingDots 1.2s ease-in-out infinite; }
+.loading-dot:nth-child(2){ animation-delay:0.18s; }
+.loading-dot:nth-child(3){ animation-delay:0.36s; }
+@keyframes loadingDots{ 0%,60%,100%{ transform:scale(1); opacity:0.7 } 30%{ transform:scale(1.3); opacity:1 } }
+
+@media (max-width:768px){
+    .chatbot-container{ width: calc(100vw - 20px); height: calc(100vh - 20px); bottom:10px; right:10px; border-radius:18px; }
+    .chatbot-toggle{ bottom:20px; right:20px; }
+}
+</style>
+
+<script>
+const chatbotContainer = document.getElementById('chatbot-container');
+const chatbotMessages = document.getElementById('chatbot-messages');
+const userInput = document.getElementById('user-input');
+let chatHistory = [];
+
+function toggleChat(){
+    chatbotContainer.classList.toggle('open');
+    const toggleButton = document.getElementById('chatbot-toggle');
+    toggleButton.classList.toggle('chat-open');
+    if(chatbotContainer.classList.contains('open')) userInput.focus();
+}
+
+function addMessage(text, sender){
+    const el = document.createElement('div');
+    el.classList.add('message-bubble');
+    el.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+    el.textContent = text;
+    chatbotMessages.appendChild(el);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    return el;
+}
+
+function handleKey(e){ if(e.key === 'Enter') sendMessage(); }
+
+async function sendMessage(){
+    const message = userInput.value.trim();
+    if(!message) return;
+    addMessage(message, 'user');
+    userInput.value = '';
+    const loadingBubble = addMessage('', 'bot');
+    loadingBubble.innerHTML = `<div class="loading-dots"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>`;
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    chatHistory.push({ role:'user', text: message });
+    try{
+        const reply = await fetchChatbotResponse(message, chatHistory);
+        loadingBubble.textContent = reply;
+        chatHistory.push({ role:'assistant', text: reply });
+    }catch(err){
+        console.error('Chat error', err);
+        loadingBubble.textContent = 'Sorry, something went wrong. Please try again later.';
+    }
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+async function fetchChatbotResponse(message, history){
+    // POST to server-side proxy; server should call the real Generative API.
+    const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, history })
+    });
+    if(!res.ok){
+        const text = await res.text().catch(()=>null);
+        throw new Error(`Server error: ${res.status} ${text || ''}`);
+    }
+    const data = await res.json().catch(()=>({ reply: res.statusText || 'No response' }));
+    return data.reply || data.message || 'Sorry, no reply available.';
+}
+</script>

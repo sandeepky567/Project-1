@@ -413,10 +413,10 @@
             <h1 class="card-title">Find places to stay on BookMyHotels</h1>
             <p class="card-subtitle">Discover entire hotels and rooms perfect for any trip.</p>
 
-            <form class="search-form" onsubmit="alert('Search functionality is not implemented in this example!'); return false;">
+            <form class="search-form" action="/search" method="get">
                 <div class="form-group location">
                     <label for="location">LOCATION</label>
-                    <input type="text" id="location" placeholder="Anywhere" aria-label="Location">
+                    <input type="text" id="location" name="q" placeholder="Anywhere" aria-label="Location">
                 </div>
 
                 <div class="date-group">
